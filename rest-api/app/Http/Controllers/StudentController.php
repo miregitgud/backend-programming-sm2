@@ -53,7 +53,6 @@ class StudentController extends Controller
     public function update(request $request, $id) {
         // menggunakan student untuk insert data
         $student = Student::find($id);
-
         $success = [
             'message' => 'Student data with id of ' . $id . ' has been updated succesfully',
             'data' => $student
@@ -63,13 +62,12 @@ class StudentController extends Controller
         ];
         // menangkap request 
         if($student) {
-            $input = [
-                'nama' => $request->nama,
-                'nim' => $request->nim,
-                'email' => $request->email,
-                'jurusan' => $request->jurusan
-                
-            ];
+            $student->nama = $request->nama;
+            $student->nim = $request->nim;
+            $student->email = $request->email;
+            $student->jurusan = $request->jurusan;
+            $student->update();
+            
             return response() -> json($success, 201);
         }
         else {
