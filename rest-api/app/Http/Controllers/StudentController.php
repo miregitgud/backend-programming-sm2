@@ -9,25 +9,59 @@ class StudentController extends Controller
 {
     // method index - get all resource 
     public function index() {
-        // menggunakan model Student untuk select data 
-        $students = Student::all();
+        $student = Student::all();
+        // menggunakan model Student untuk select data
+        if($student->isNotEmpty()) {
+            $data = [
+                'message' => 'Get all students',
+                'data' => $student
+            ];
+    
+    
+            // menggunakan respon json laravel
+            // otomatis set header content type json
+            // otomatis mengubah data array ke json
+            // mengatur status code
+            return response()->json($data, 200);
+        }
+        else{
+            $data = [
+                'message' => 'No data exists in this database, try adding one.'
+            ];
+            return response()->json($data,404);
+        }
+        
+    }
 
-        $data = [
-            'message' => 'Get all students',
-            'data' => $students,
-        ];
+    // method show untuk menampilkan detail data student
+    public function show($id) {
+        $student = Student::find($id);
 
-
-        // menggunakan respon json laravel
-        // otomatis set header content type json
-        // otomatis mengubah data array ke json
-        // mengatur status code
-        return response()->json($data, 200);
+        if($student) {
+            $data = [
+                'message' => 'Get detail student',
+                'data' => $student
+            ];
+            return response()->json($data,200);
+        }
+        else {
+            $data = [
+                'message' => 'Data not found'
+            ];
+            return response()->json($data,404);
+        }
     }
 
     // menambahkan resource student
     // membuat method store
     public function store(Request $request) {
+
+        $request->validate([
+            'nama'=>'required|max:191',
+            'nim'=>'required|max:191',
+            'email'=>'required|max:191',
+            'jurusan'=>'required|max:191'
+        ]);
 
         // menangkap request 
         $input = [
@@ -62,10 +96,10 @@ class StudentController extends Controller
         ];
         // menangkap request 
         if($student) {
-            $student->nama = $request->nama;
-            $student->nim = $request->nim;
-            $student->email = $request->email;
-            $student->jurusan = $request->jurusan;
+            $student->nama = $request->nama ?? $student->nama;
+            $student->nim = $request->nim ?? $student->nim;
+            $student->email = $request->email ?? $student->email;
+            $student->jurusan = $request->jurusan ?? $student->jurusan;
             $student->update();
             
             return response() -> json($success, 201);
