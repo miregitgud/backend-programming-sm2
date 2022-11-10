@@ -13,7 +13,7 @@ class StudentController extends Controller
         // menggunakan model Student untuk select data
         if($student->isNotEmpty()) {
             $data = [
-                'message' => 'Get all students',
+                'message' => 'Showing all students data.',
                 'data' => $student
             ];
     
@@ -26,7 +26,7 @@ class StudentController extends Controller
         }
         else{
             $data = [
-                'message' => 'No data exists in this database, try adding one.'
+                'message' => 'No data exists in this collection, try adding one.'
             ];
             return response()->json($data,404);
         }
@@ -39,14 +39,14 @@ class StudentController extends Controller
 
         if($student) {
             $data = [
-                'message' => 'Get detail student',
+                'message' => 'Showing data of student id ' . $id . '.',
                 'data' => $student
             ];
             return response()->json($data,200);
         }
         else {
             $data = [
-                'message' => 'Data not found'
+                'message' => 'Data not found, double check your input and try again.'
             ];
             return response()->json($data,404);
         }
@@ -58,8 +58,8 @@ class StudentController extends Controller
 
         $request->validate([
             'nama'=>'required|max:191',
-            'nim'=>'required|max:191',
-            'email'=>'required|max:191',
+            'nim'=>'numeric|required|',
+            'email'=>'email|required|max:191',
             'jurusan'=>'required|max:191'
         ]);
 
@@ -75,7 +75,7 @@ class StudentController extends Controller
         $student = Student::create($input);
 
         $data = [
-            'message' => 'Student data has been created succesfully',
+            'message' => 'A new student data has been created succesfully.',
             'data' => $student
         ];
 
@@ -88,20 +88,27 @@ class StudentController extends Controller
         // menggunakan student untuk insert data
         $student = Student::find($id);
         $success = [
-            'message' => 'Student data with id of ' . $id . ' has been updated succesfully',
+            'message' => 'Student data with id of ' . $id . ' has been updated succesfully.',
             'data' => $student
         ];
         $fail = [
-            'message' => 'Data not found'
+            'message' => 'Data not found, double check your input and try again.'
+        ];
+        $request->validate([
+            'nama'=>'max:191',
+            'nim'=>'numeric',
+            'email'=>'email|max:191',
+            'jurusan'=>'max:191'
+        ]);
+        $input = [
+            'nama' => $request->nama ?? $student->nama,
+            'nim' => $request->nim ?? $student->nim,
+            'email' => $request->email ?? $student->email,
+            'jurusan' => $request->jurusan ?? $student->jurusan
         ];
         // menangkap request 
         if($student) {
-            $student->nama = $request->nama ?? $student->nama;
-            $student->nim = $request->nim ?? $student->nim;
-            $student->email = $request->email ?? $student->email;
-            $student->jurusan = $request->jurusan ?? $student->jurusan;
-            $student->update();
-            
+            $student->update($input);
             return response() -> json($success, 201);
         }
         else {
@@ -113,11 +120,11 @@ class StudentController extends Controller
         $student = Student::find($id);
 
         $success = [
-            'message' => 'Student data with id of ' . $id . ' has been deleted succesfully'
+            'message' => 'Student data with id of ' . $id . ' has been deleted succesfully.'
         ];
 
         $fail = [
-            'message' => 'Data not found'
+            'message' => 'Data not found, double check your input and try again.'
         ];
 
         if($student) {

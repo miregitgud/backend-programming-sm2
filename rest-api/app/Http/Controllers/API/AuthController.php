@@ -25,6 +25,7 @@ class AuthController extends Controller
         $token = $user->createToken('ayyashMuhammadToken')->plainTextToken;
 
         $response =[
+            'message'=>'Succesfully created a new user. Dont be a stranger, ' . $user . '!',
             'user'=>$user,
             'token'=>$token
         ];
@@ -34,7 +35,7 @@ class AuthController extends Controller
 
     public function logout() {
         auth()->user()->tokens()->delete();
-        $message = ['message'=>'Session logged out.'];
+        $message = ['message'=>'Succesfully logged out.'];
         return response()->json($message, 200);
     }
 
@@ -47,11 +48,12 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
         
         if(!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json(['message'=>'Invalid credentials'], 401);
+            return response()->json(['message'=>'Invalid username or password, please try again.'], 401);
         }
         else {
             $token = $user->createToken('ayyashMuhammadTokenLogin')->plainTextToken;
             $response = [
+                'message'=>'Logged in successfully, welcome back, ' . $user->name . '!',
                 'user' => $user,
                 'token' => $token
             ];
