@@ -2,7 +2,7 @@
 const express = require("express");
 
 // import router
-const router = require("./routes/api.js")
+const router = require("./routes/api.js");
 
 // membuat object express
 const app = express();
@@ -14,5 +14,5 @@ app.use(express.urlencoded());
 // menggunakan routing (router)
 app.use(router);
 
-// Mendefinisikan port
+// mendefinisikan port
 app.listen(3000);
