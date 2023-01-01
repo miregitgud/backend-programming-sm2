@@ -8,7 +8,7 @@ class StudentController {
     const students = await Student.all();
 
     const data = {
-      message: "Menampilkkan semua students",
+      message: `Menampilkkan semua students`,
       data: students,
     };
 
@@ -16,46 +16,74 @@ class StudentController {
   }
 
   async store(req, res) {
-    /**
-     * TODO 2: memanggil method create.
-     * Method create mengembalikan data yang baru diinsert.
-     * Mengembalikan response dalam bentuk json.
-     */
-    const {nama, nim, email, jurusan} = req.body;
-
-    await Student.create(nama, nim ,email, jurusan);
-
-    const newStudentData = {nama, nim, email, jurusan};
+    const student = await Student.create(req.body);
 
     const data = {
-      message: `Adding student data with the name ${nama}`,
-      data: newStudentData,
+      message: `Adding student data with the name ${req.body.nama}`,
+      data: student,
     };
 
     res.json(data);
   }
 
-  update(req, res) {
+  async update(req, res) {
     const { id } = req.params;
-    const { nama } = req.body;
 
-    const data = {
-      message: `Mengedit student id ${id}, nama ${nama}`,
-      data: [],
-    };
+    const student = await Student.find(id);
 
-    res.json(data);
+    if (student) {
+      const student = await Student.update(id, req.body);
+      const data = {
+        message: `Editing students data with id of ${id}`,
+        data: student,
+      };
+      res.status(200).json(data);
+    }
+
+    else {
+      const data = {
+        message: `Student data not found, please double check your input and try again`,
+      };
+      res.status(404).json(data);
+    }
   }
 
-  destroy(req, res) {
+  async destroy(req, res) {
     const { id } = req.params;
+    const student = await Student.find(id);
 
-    const data = {
-      message: `Menghapus student id ${id}`,
-      data: [],
-    };
+    if (student) {
+      await Student.delete(id);
+      const data = {
+        message: `Deleting student with id of ${id}`,
+      }
+      res.status(200).json(data);
+    }
 
-    res.json(data);
+    else {
+      const data = {
+        message: `Data not found, double check your input and try again.`,
+      }
+      res.status(404).json(data);
+    }
+  }
+
+  async show(req, res) {
+    const {id} = req.params;
+    const student = await Student.find(id);
+
+    if (student) {
+      const data = {
+        message: `Showing data student with id of ${id}`,
+        data: student,
+      };
+      res.status(200).json(data);
+    } else {
+      const data = {
+        message: `Student not found, double check your input and try again.`
+      };
+      res.status(404).json(data);
+    }
   }
 }
 
