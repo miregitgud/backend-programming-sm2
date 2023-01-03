@@ -69,7 +69,7 @@ const destroy = async (table, id) => {
   }
 
   return new Promise((resolve, reject) => {
-    const sql = `DELETE FROM students WHERE id = ?`;
+    const sql = `DELETE FROM ${table} WHERE id = ?`;
     db.query(sql, id, (err, results) => {
       resolve(results);
     });
